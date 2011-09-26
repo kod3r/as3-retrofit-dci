@@ -31,7 +31,7 @@ package eu.powdermonkey
 		private function testMixins():void
 		{
 			testDesk()
-//			testPerson()
+			testPerson()
 		}
 				
 		private function testDesk():void
@@ -46,26 +46,39 @@ package eu.powdermonkey
 		
 		private function testPerson():void
 		{
-			var person:Person = mixinRepo.create(Person)
-//			var type:XML = describeType(Person)
-//			trace(type)
-			trace('person:', person)
+			var personA:Person = mixinRepo.create(Person)
+		
 			var roomA:Room = new Room('roomA')
 			var roomB:Room = new Room('roomB')
 			
-			person.joinRoom(roomA)
-			trace('person.room:', person.room)
+			personA.joinRoom(roomA)
+			trace('personA.room:', personA.room)
 			
-			person.enteredTwoRooms(roomB, roomA)
-			trace('person.room:', person.room)
+			personA.enteredTwoRooms(roomB, roomA)
+			trace('personA.room:', personA.room)
 			
-			person.room = roomA
-			trace('person.room:', person.room)
+			personA.room = roomA
+			trace('personA.room:', personA.room)
 			
-			trace('person.getRoomName(roomA):', person.getRoomName(roomA))
+			trace('personA.getRoomName(roomA):', personA.getRoomName(roomA))
 			
-			person.move(new Point())
-			trace('person.location:', person.location)
+			personA.move(new Point())
+			trace('personA.location:', personA.location)
+			
+			// test multiple instances
+			var personB:Person = mixinRepo.create(Person)
+			
+			personA.joinRoom(roomA);
+			personB.joinRoom(roomB);
+			
+			trace("personA is in room", personA.room, " (should be roomA)");
+			trace("personB is in room", personB.room, " (should be roomB)");
+			
+			personA.room = roomB;
+			personB.room = roomA;
+			
+			trace("personA is in room", personA.room, " (should be roomB)");
+			trace("personB is in room", personB.room, " (should be roomA)");
 		}
 		
 		private function testValueClass():void
