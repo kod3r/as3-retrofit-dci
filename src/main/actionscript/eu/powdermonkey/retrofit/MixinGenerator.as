@@ -1,5 +1,6 @@
 package eu.powdermonkey.retrofit
 {
+	import flash.utils.describeType;
 	import flash.utils.Dictionary;
 	
 	import org.flemit.bytecode.*;
@@ -108,6 +109,15 @@ package eu.powdermonkey.retrofit
 					instructions.push([FindPropertyStrict, proxyObjectType.qname])
 					instructions.push([ConstructProp, proxyObjectType.qname, 0])
 					instructions.push([InitProperty, proxyPropertyName])
+					
+					for each (var variable:XML in describeType(proxyObjectType.classDefinition).factory.variable) {
+						if (variable.metadata.(@name == "Self").length()) {
+							var varName:QualifiedName = new QualifiedName(namespaze, variable.@name);
+							instructions.push([GetLex, proxyPropertyName])
+							instructions.push([GetLocal, 0])
+							instructions.push([SetProperty, varName])						
+						}
+					}					
 					
 					proxies++
 				}
