@@ -176,7 +176,7 @@ package eu.powdermonkey.retrofit
 				? type.qname.ns
 				: BCNamespace.packageNS(type.packageName);
 			
-			return new QualifiedName(ns, type.name + GUID.create());
+			return new QualifiedName(ns, "Generated" + type.name);
 		}
 		
 		private function typeAlreadyPreparedFilter(cls:Class, index:int, array:Array):Boolean
