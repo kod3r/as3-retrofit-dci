@@ -33,6 +33,35 @@ package eu.powdermonkey.retrofit
 			var method:MethodInfo
 			var property:PropertyInfo
 			
+			// add fields for proxied objects
+			
+			var propertyInfo:PropertyInfo
+			var proxyPropertyName:QualifiedName
+			var proxyObject:Object 
+			var proxyObjectType:Type 
+			
+			for (var interfaceType:* in mixins) 
+			{
+				proxyObject = mixins[interfaceType]
+				proxyObjectType = Type.getType(proxyObject)
+				proxyPropertyName = buildProxyPropName(namespaze, interfaceType)
+				
+				var namespaze:BCNamespace = new BCNamespace('', NamespaceKind.PACKAGE_NAMESPACE)
+				
+				var fieldInfo:FieldInfo = new FieldInfo(
+					dynamicClass,  // onwer
+					buildProxyPropName(namespaze, interfaceType).name, // name
+					null, // fullname
+					MemberVisibility.PUBLIC, // visibility
+					false, // static
+					interfaceType); // type
+									
+				
+				dynamicClass.addSlot(fieldInfo); // add field
+			}
+			
+			//
+			
 			dynamicClass.constructor = createConstructor(dynamicClass)
 			
 			dynamicClass.addMethodBody(dynamicClass.scriptInitialiser, generateScriptInitialier(dynamicClass))
@@ -75,7 +104,7 @@ package eu.powdermonkey.retrofit
 					proxyObjectType = Type.getType(proxyObject)
 					proxyPropertyName = buildProxyPropName(namespaze, interfaceType)
 					
-					instructions.push([FindProperty, proxyPropertyName])
+					instructions.push([GetLocal_0]); // 'this'	
 					instructions.push([FindPropertyStrict, proxyObjectType.qname])
 					instructions.push([ConstructProp, proxyObjectType.qname, 0])
 					instructions.push([InitProperty, proxyPropertyName])
@@ -113,7 +142,8 @@ package eu.powdermonkey.retrofit
 				
 				if (methodType == MethodType.METHOD)
 				{
-					instructions.push([GetLex, proxyPropertyName])
+					instructions.push([GetLocal_0])
+					instructions.push([GetProperty, proxyPropertyName])
 					
 					for (var i:uint=0; i < argCount; ++i)
 					{
@@ -139,8 +169,16 @@ package eu.powdermonkey.retrofit
 					
 					if (methodType == MethodType.PROPERTY_SET)
 					{
-						instructions.push([Pop])
+						instructions.push([GetLocal, 0])
+						instructions.push([GetProperty, proxyPropertyName])
+						instructions.push([GetLocal, 1])
+						instructions.push([SetProperty, methodQName])						
 					}
+					else {
+						instructions.push([GetLocal, 0])
+						instructions.push([GetProperty, proxyPropertyName])
+						instructions.push([GetProperty, methodQName])
+					}		
 				}
 				
 				if (method.returnType == Type.voidType) // void
