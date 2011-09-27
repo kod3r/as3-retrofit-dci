@@ -110,14 +110,13 @@ package eu.powdermonkey.retrofit
 					instructions.push([ConstructProp, proxyObjectType.qname, 0])
 					instructions.push([InitProperty, proxyPropertyName])
 					
-					for each (var variable:XML in describeType(proxyObjectType.classDefinition).factory.variable) {
-						if (variable.metadata.(@name == "Self").length()) {
-							var varName:QualifiedName = new QualifiedName(namespaze, variable.@name);
-							instructions.push([GetLex, proxyPropertyName])
-							instructions.push([GetLocal, 0])
-							instructions.push([SetProperty, varName])						
-						}
-					}					
+					// inject proxy to proxied object
+					for each (var variable:XML in describeType(proxyObject).factory.variable.(metadata.@name == "Self")) {
+						var varName:QualifiedName = new QualifiedName(namespaze, variable.@name);
+						instructions.push([GetLex, proxyPropertyName]); // get proxied object
+						instructions.push([GetLocal, 0]); // put "this" on stack
+						instructions.push([SetProperty, varName]); // assign "this" to self variable
+					}
 					
 					proxies++
 				}
