@@ -21,6 +21,7 @@ package eu.powdermonkey
 		public function joinRoom(room:Room):void
 		{
 			_room = room
+			_room.addResident(this);
 		}
 		
 		public function enteredTwoRooms(roomA:Room, roomB:Room):void
@@ -32,6 +33,16 @@ package eu.powdermonkey
 		public function getRoomName(room:Room):String
 		{
 			return room.name
+		}
+		
+		private var _name:String;
+		
+		public function set name(value:String):void {
+			_name = value;
+		}
+		
+		public function get name():String {
+			return _name;
 		}
 	}
 }

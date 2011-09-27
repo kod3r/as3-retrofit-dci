@@ -1,5 +1,8 @@
 package eu.powdermonkey
 {
+	import dci.context.RoomTravelContext;
+	import dci.interaction.IRoomTravellerRole;
+	import dci.interaction.RoomTravellerRole;
 	import eu.powdermonkey.retrofit.MixinRepository;
 	import eu.powdermonkey.retrofit.ValueClassRepository;
 	
@@ -19,6 +22,7 @@ package eu.powdermonkey
 				defineMixin(RoomObject, RoomObjectCls)
 				defineMixin(Moveable, MoveableCls)
 				defineMixin(ItemContainer, ItemContainerImpl)
+				defineMixin(IRoomTravellerRole, RoomTravellerRole)
 				defineBase(Person)
 				defineBase(Desk)
 				defineBase(Item)
@@ -32,6 +36,28 @@ package eu.powdermonkey
 		{
 			testDesk()
 			testPerson()
+			testDCI();
+		}
+		
+		private function testDCI():void {
+			var dummyPerson:Person = mixinRepo.create(Person);
+			
+			var shyPerson:Person = mixinRepo.create(Person);
+			shyPerson.name = "Shy Guy";
+			
+			var perkyPerson:Person = mixinRepo.create(Person);
+			perkyPerson.name = "Perky Guy";
+			
+			var dummyRoom:Room = new Room("Dummy Room");
+			dummyPerson.joinRoom(dummyRoom);
+			
+			var emptyRoom:Room = new Room("Empty Room");
+			
+			var shyPersonTravelContext:RoomTravelContext = new RoomTravelContext(shyPerson, dummyRoom, emptyRoom);
+			var perkyPersonTravelContext:RoomTravelContext = new RoomTravelContext(perkyPerson, dummyRoom, emptyRoom);
+			
+			shyPersonTravelContext.visitEmptyRooms();
+			perkyPersonTravelContext.visitAllRooms();
 		}
 				
 		private function testDesk():void
