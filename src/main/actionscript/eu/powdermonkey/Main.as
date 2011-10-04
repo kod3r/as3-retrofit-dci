@@ -4,6 +4,7 @@ package eu.powdermonkey
 	import dci.interaction.IRoomTravellerRole;
 	import dci.interaction.RoomTravellerRole;
 	import eu.powdermonkey.retrofit.MixinRepository;
+	import eu.powdermonkey.retrofit.plugins.SelfInjection;
 	import eu.powdermonkey.retrofit.ValueClassRepository;
 	
 	import flash.geom.Point;
@@ -16,9 +17,12 @@ package eu.powdermonkey
 		private var valueClassRepo:ValueClassRepository = new ValueClassRepository()
 		
 		public function Main()
-		{
+		{			
 			with(mixinRepo)
 			{
+				// add self injection plugin required for dci test
+				addGeneratorPlugin(new SelfInjection())
+				
 				defineMixin(RoomObject, RoomObjectCls)
 				defineMixin(Moveable, MoveableCls)
 				defineMixin(ItemContainer, ItemContainerImpl)

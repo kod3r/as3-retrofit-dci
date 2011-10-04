@@ -10,13 +10,29 @@ package eu.powdermonkey.retrofit
 	import org.flemit.util.ClassUtility;
 	import org.flemit.util.MethodUtil;
 	
+	import eu.powdermonkey.retrofit.plugins.DefaultInstructions;
+	import eu.powdermonkey.retrofit.plugins.IGeneratorPlugin;
+	
 	public class MixinRepository extends ClassRepository
 	{
-		private var mixinGenerator:MixinGenerator = new MixinGenerator()
-		
 		protected var mixinPairs:Dictionary = new Dictionary()
 		
 		protected var bases:Dictionary = new Dictionary()
+		
+		protected var _generatorPlugins:Array;
+		
+		public function MixinRepository() {
+			super();
+			generatorPlugins = [new DefaultInstructions()];
+		}
+		
+		public function addGeneratorPlugin(plugin:IGeneratorPlugin):void {
+			_generatorPlugins.push(plugin);
+		}
+		
+		public function set generatorPlugins(value:Array):void {
+			_generatorPlugins = value;
+		}
 		
 		public function defineMixin(interfaze:Class, clazz:Class):void
 		{
@@ -25,7 +41,7 @@ package eu.powdermonkey.retrofit
 				throw ArgumentError(interfaze+' is already defined, you can supply an override during preparation of the base')
 			}
 			
-			mixinPairs[interfaze] = clazz
+			mixinPairs[interfaze] = clazz			
 		}
 		
 		public function defineBase(base:Class, mixins:Object=null):void
@@ -71,8 +87,8 @@ package eu.powdermonkey.retrofit
 						throw new Error('interface '+interfaze+' defined on '+base+'has not being defined') 
 					}
 				}
-				
-				return mixinGenerator.generate(name, base, mixins)
+				trace(_generatorPlugins);
+				return new MixinGenerator(_generatorPlugins).generate(name, base, mixins)
 			}
 		}
 		

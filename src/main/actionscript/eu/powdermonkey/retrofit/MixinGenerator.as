@@ -1,13 +1,23 @@
 package eu.powdermonkey.retrofit
 {
+	import eu.powdermonkey.retrofit.plugins.IGeneratorPlugin;
 	import flash.utils.describeType;
 	import flash.utils.Dictionary;
 	
 	import org.flemit.bytecode.*;
 	import org.flemit.reflection.*;
 	
+	import eu.powdermonkey.retrofit.plugins.ProxiedObjectData;
+	
 	public class MixinGenerator extends BaseGenerator
 	{
+		protected var _plugins:Array;
+		
+		public function MixinGenerator(plugins:Array) {
+			super();
+			_plugins = plugins;
+		}
+		
 		public function generate(name:QualifiedName, base:Type, mixins:Dictionary):DynamicClass
 		{
 			var superClass:Type = Type.getType(Object)
@@ -105,19 +115,11 @@ package eu.powdermonkey.retrofit
 					proxyObjectType = Type.getType(proxyObject)
 					proxyPropertyName = buildProxyPropName(namespaze, interfaceType)
 					
-					instructions.push([GetLocal_0]); // 'this'	
-					instructions.push([FindPropertyStrict, proxyObjectType.qname])
-					instructions.push([ConstructProp, proxyObjectType.qname, 0])
-					instructions.push([InitProperty, proxyPropertyName])
+					var proxiedObjectData:ProxiedObjectData = new ProxiedObjectData(proxyObject, interfaceType, namespaze);
 					
-					for each (var variable:XML in describeType(proxyObjectType.classDefinition).factory.variable) {
-						if (variable.metadata.(@name == "Self").length()) {
-							var varName:QualifiedName = new QualifiedName(namespaze, variable.@name);
-							instructions.push([GetLex, proxyPropertyName])
-							instructions.push([GetLocal, 0])
-							instructions.push([SetProperty, varName])						
-						}
-					}					
+					for each (var plugin:IGeneratorPlugin in _plugins) {
+						instructions = instructions.concat(plugin.onProxiedObjectInitialization(proxiedObjectData));
+					}
 					
 					proxies++
 				}
