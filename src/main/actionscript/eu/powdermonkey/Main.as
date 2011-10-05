@@ -6,6 +6,8 @@ package eu.powdermonkey
 	import eu.powdermonkey.retrofit.MixinRepository;
 	import eu.powdermonkey.retrofit.plugins.SelfInjection;
 	import eu.powdermonkey.retrofit.ValueClassRepository;
+	import flash.utils.getTimer;
+	import mx.controls.Alert;
 	
 	import flash.geom.Point;
 	import flash.utils.describeType;
@@ -38,12 +40,34 @@ package eu.powdermonkey
 		
 		private function testMixins():void
 		{
-			testDesk()
-			testPerson()
-			testDCI();
+			//testDesk()
+			//testPerson()
+			//testDCIwithGen();
+			//testDCIwithDitto();			
+			testPerformance();
 		}
 		
-		private function testDCI():void {
+		private function measure(foo:Function, times:int):Number {
+			var start:Number = getTimer();
+			for (var i:int = 0; i < times; i++) {
+				foo();
+			}
+			return getTimer() - start;
+		}
+		
+		/**
+		 * XXX: run in release mode
+		 */
+		private function testPerformance()
+		{
+			var times:int = 10000;
+			var gen:Number = measure(testDCIwithGen, times);
+			var ditto:Number = measure(testDCIwithDitto, times);			
+			var results:String = "Ditto: " + ditto +  " / " + "Generated: " + gen;
+			Alert.show(results);
+		}
+		
+		private function testDCIwithGen():void {
 			var dummyPerson:Person = mixinRepo.create(Person);
 			
 			var shyPerson:Person = mixinRepo.create(Person);
@@ -63,6 +87,27 @@ package eu.powdermonkey
 			shyPersonTravelContext.visitEmptyRooms();
 			perkyPersonTravelContext.visitAllRooms();
 		}
+		
+		private function testDCIwithDitto():void {
+			var dummyPerson:Person = new PersonDitto();
+			
+			var shyPerson:Person = new PersonDitto();
+			shyPerson.name = "Shy Guy";
+			
+			var perkyPerson:Person = new PersonDitto();
+			perkyPerson.name = "Perky Guy";
+			
+			var dummyRoom:Room = new Room("Dummy Room");
+			dummyPerson.joinRoom(dummyRoom);
+			
+			var emptyRoom:Room = new Room("Empty Room");
+			
+			var shyPersonTravelContext:RoomTravelContext = new RoomTravelContext(shyPerson, dummyRoom, emptyRoom);
+			var perkyPersonTravelContext:RoomTravelContext = new RoomTravelContext(perkyPerson, dummyRoom, emptyRoom);
+			
+			shyPersonTravelContext.visitEmptyRooms();
+			perkyPersonTravelContext.visitAllRooms();
+		}		
 				
 		private function testDesk():void
 		{

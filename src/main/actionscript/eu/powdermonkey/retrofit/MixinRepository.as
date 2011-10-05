@@ -87,7 +87,6 @@ package eu.powdermonkey.retrofit
 						throw new Error('interface '+interfaze+' defined on '+base+'has not being defined') 
 					}
 				}
-				trace(_generatorPlugins);
 				return new MixinGenerator(_generatorPlugins).generate(name, base, mixins)
 			}
 		}
