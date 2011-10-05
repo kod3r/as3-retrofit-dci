@@ -68,12 +68,12 @@ package eu.powdermonkey
 		}
 		
 		private function testDCIwithGen():void {
-			var dummyPerson:Person = mixinRepo.create(Person);
+			var dummyPerson:Person = mixinRepo.createSimple(Person);
 			
-			var shyPerson:Person = mixinRepo.create(Person);
+			var shyPerson:Person = mixinRepo.createSimple(Person);
 			shyPerson.name = "Shy Guy";
 			
-			var perkyPerson:Person = mixinRepo.create(Person);
+			var perkyPerson:Person = mixinRepo.createSimple(Person);
 			perkyPerson.name = "Perky Guy";
 			
 			var dummyRoom:Room = new Room("Dummy Room");

@@ -8,3 +8,15 @@ Ditto: 141 / Generated: 963
 Ditto: 140 / Generated: 942
 Ditto: 140 / Generated: 951
 Ditto: 143 / Generated: 944
+
+using createSimple instead of create
+Ditto: 155 / Generated: 394
+Ditto: 150 / Generated: 417
+Ditto: 154 / Generated: 423
+Ditto: 169 / Generated: 410
+Ditto: 156 / Generated: 403
+Ditto: 162 / Generated: 399
+Ditto: 151 / Generated: 406
+Ditto: 156 / Generated: 409
+Ditto: 155 / Generated: 405
+Ditto: 154 / Generated: 396

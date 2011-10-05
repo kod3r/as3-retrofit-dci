@@ -91,6 +91,10 @@ package eu.powdermonkey.retrofit
 			}
 		}
 		
+		public function createSimple(cls:Class):* {
+			return new classes[cls]();
+		}
+		
 		public function create(cls:Class, args:Object=null):*
 		{
 			args = args || {}
