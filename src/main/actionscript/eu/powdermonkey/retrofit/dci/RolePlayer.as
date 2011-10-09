@@ -17,16 +17,24 @@ package eu.powdermonkey.retrofit.dci
 			_roles = new Dictionary();
 		}
 		
-		/* INTERFACE IRolePlayer */
-		
+		/**
+		 * Returns role which will be played by object
+		 * @param	role
+		 * @return
+		 */
 		public function play(role:Class):* 
 		{
-			if (!(role in _roles)) {
-				_roles[role] = new role(self);
-			}
-			return _roles[role];
+			return _roles[role] || cacheRole(role);
 		}
 		
+		/**
+		 * Cache role and return instance
+		 * @param	role
+		 * @return
+		 */
+		private function cacheRole(role:Class):* {
+			return (_roles[role] = new role(self));
+		}
 	}
 
 }
