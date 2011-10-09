@@ -1,6 +1,7 @@
 package dci.context 
 {
 	import dci.interaction.IRoomTravellerRole;
+	import dci.interaction.RoomTravellerRole;
 	import eu.powdermonkey.Person;
 	import eu.powdermonkey.Room;
 	/**
@@ -14,7 +15,7 @@ package dci.context
 		
 		public function RoomTravelContext(person:Person, ...rooms) 
 		{
-			_traveller = person as IRoomTravellerRole;
+			_traveller = person.play(RoomTravellerRole);
 			_rooms = rooms;
 		}
 		

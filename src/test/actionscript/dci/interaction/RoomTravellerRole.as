@@ -3,18 +3,17 @@ package dci.interaction
 	import eu.powdermonkey.Room;
 	import eu.powdermonkey.RoomObject;
 	import eu.powdermonkey.RoomObjectCls;
+	import eu.powdermonkey.retrofit.dci.Role;
 	/**
 	 * ...
 	 * @author ifrost
 	 */
-	public class RoomTravellerRole implements IRoomTravellerRole 
+	public class RoomTravellerRole extends Role implements IRoomTravellerRole 
 	{
-		[Self]
-		public var self:Object;
 		
-		public function RoomTravellerRole() 
+		public function RoomTravellerRole(self:Object) 
 		{
-			
+			super(self);
 		}
 		
 		public function get asRoomObject():RoomObject {

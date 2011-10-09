@@ -19,9 +19,11 @@ package eu.powdermonkey
 		{
 			roomObject = new RoomObjectCls();
 			moveable = new MoveableCls();
-			traveller = new RoomTravellerRole();
-
-			traveller.self = this;
+			traveller = new RoomTravellerRole(this);
+		}
+		
+		public function play(role:Class):* {
+			return new role(this);
 		}
 		
 		/* INTERFACE eu.powdermonkey.Person */

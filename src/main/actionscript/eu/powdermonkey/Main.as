@@ -3,6 +3,8 @@ package eu.powdermonkey
 	import dci.context.RoomTravelContext;
 	import dci.interaction.IRoomTravellerRole;
 	import dci.interaction.RoomTravellerRole;
+	import eu.powdermonkey.retrofit.dci.IRolePlayer;
+	import eu.powdermonkey.retrofit.dci.RolePlayer;
 	import eu.powdermonkey.retrofit.MixinRepository;
 	import eu.powdermonkey.retrofit.plugins.SelfInjection;
 	import eu.powdermonkey.retrofit.ValueClassRepository;
@@ -24,7 +26,7 @@ package eu.powdermonkey
 			{
 				// add self injection plugin required for dci test
 				addGeneratorPlugin(new SelfInjection())
-				
+				defineMixin(IRolePlayer, RolePlayer);
 				defineMixin(RoomObject, RoomObjectCls)
 				defineMixin(Moveable, MoveableCls)
 				defineMixin(ItemContainer, ItemContainerImpl)
@@ -42,9 +44,9 @@ package eu.powdermonkey
 		{
 			//testDesk()
 			//testPerson()
-			//testDCIwithGen();
-			//testDCIwithDitto();			
-			testPerformance();
+			testDCIwithGen();
+			testDCIwithDitto();			
+			//testPerformance();
 		}
 		
 		private function measure(foo:Function, times:int):Number {
