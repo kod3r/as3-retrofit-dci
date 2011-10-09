@@ -1,5 +1,6 @@
 package eu.powdermonkey.retrofit.dci
 {
+	import flash.utils.Dictionary;
 	/**
 	 * ...
 	 * @author ifrost
@@ -9,16 +10,21 @@ package eu.powdermonkey.retrofit.dci
 		[Self]
 		public var self:Object;
 		
+		protected var _roles:Dictionary;
+		
 		public function RolePlayer() 
 		{
-			
+			_roles = new Dictionary();
 		}
 		
 		/* INTERFACE IRolePlayer */
 		
 		public function play(role:Class):* 
 		{
-			return new role(self);
+			if (!(role in _roles)) {
+				_roles[role] = new role(self);
+			}
+			return _roles[role];
 		}
 		
 	}
