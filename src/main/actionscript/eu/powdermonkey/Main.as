@@ -42,9 +42,9 @@ package eu.powdermonkey
 		{
 			//testDesk()
 			//testPerson()
-			//testDCIwithGen();
-			//testDCIwithDitto();			
-			testPerformance();
+			testDCIwithGen();
+			testDCIwithDitto();			
+			//testPerformance();
 		}
 		
 		private function measure(foo:Function, times:int):Number {

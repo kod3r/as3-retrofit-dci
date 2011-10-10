@@ -10,6 +10,7 @@ package eu.powdermonkey.retrofit
 	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
 	import flash.utils.getQualifiedClassName;
+	import org.flexunit.experimental.theories.internals.error.CouldNotGenerateValueException;
 	
 	import org.flemit.SWFHeader;
 	import org.flemit.SWFWriter;
@@ -101,7 +102,7 @@ package eu.powdermonkey.retrofit
 			
 			function swfErrorHandler(error:ErrorEvent) : void
 			{
-				trace("Error generating swf: " + error.text)
+				throw new Error("Error generating swf: " + error.text);
 				preperationSignals.error.dispatch(error)
 			}
 			

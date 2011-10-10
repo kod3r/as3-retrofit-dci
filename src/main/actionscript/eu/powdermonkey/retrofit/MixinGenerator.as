@@ -129,7 +129,7 @@ package eu.powdermonkey.retrofit
 				);
 				
 				var argumentBytes:int = proxies * 9
-				trace(instructions);
+				
 				return new DynamicMethod(dynamicClass.constructor, 6 + argumentBytes, 3 + argumentBytes, 4, 5, instructions);
 			}
 		}
