@@ -1,10 +1,12 @@
 package eu.powdermonkey
 {
+	import dci.aspects.VisitLogger;
 	import dci.context.RoomTravelContext;
 	import dci.interaction.IRoomTravellerRole;
 	import dci.interaction.RoomTravellerRole;
 	import eu.powdermonkey.retrofit.MixinRepository;
-	import eu.powdermonkey.retrofit.plugins.SelfInjection;
+	import eu.powdermonkey.retrofit.plugins.asp3cts.Asp3ctsPlugin;
+	import eu.powdermonkey.retrofit.plugins.selfinjection.SelfInjection;
 	import eu.powdermonkey.retrofit.ValueClassRepository;
 	import flash.utils.getTimer;
 	import mx.controls.Alert;
@@ -25,6 +27,11 @@ package eu.powdermonkey
 				// add self injection plugin required for dci test
 				addGeneratorPlugin(new SelfInjection())
 				
+				// add aspects plugin with sample aspect
+				var aspectPlugin:Asp3ctsPlugin = new Asp3ctsPlugin();
+				aspectPlugin.addAspect(new VisitLogger());
+				addGeneratorPlugin(aspectPlugin);
+				
 				defineMixin(RoomObject, RoomObjectCls)
 				defineMixin(Moveable, MoveableCls)
 				defineMixin(ItemContainer, ItemContainerImpl)
@@ -32,6 +39,8 @@ package eu.powdermonkey
 				defineBase(Person)
 				defineBase(Desk)
 				defineBase(Item)
+				
+				trace("defined...");
 				prepare().completed.add(testMixins)
 			}
 			
@@ -40,10 +49,11 @@ package eu.powdermonkey
 		
 		private function testMixins():void
 		{
+			trace("all mixins ready");
 			//testDesk()
 			//testPerson()
 			testDCIwithGen();
-			testDCIwithDitto();			
+			//testDCIwithDitto();			
 			//testPerformance();
 		}
 		
