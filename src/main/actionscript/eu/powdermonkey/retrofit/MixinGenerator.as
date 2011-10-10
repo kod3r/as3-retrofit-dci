@@ -1,6 +1,7 @@
 package eu.powdermonkey.retrofit
 {
 	import eu.powdermonkey.retrofit.plugins.IGeneratorPlugin;
+	import eu.powdermonkey.retrofit.plugins.ProxiedObjectMethodData;
 	import flash.utils.describeType;
 	import flash.utils.Dictionary;
 	
@@ -110,6 +111,9 @@ package eu.powdermonkey.retrofit
 				var proxyObjectType:Type 
 				
 				// HOOK: before proxy initialization
+				for each (var plugin:IGeneratorPlugin in _plugins) {
+					plugin.beforeProxyInitialization(instructions);
+				}
 				
 				for (var interfaceType:Type in mixins) 
 				{
@@ -141,6 +145,11 @@ package eu.powdermonkey.retrofit
 					proxies++
 				}
 				
+				// HOOK: after proxy initialization
+				for each (var plugin:IGeneratorPlugin in _plugins) {
+					plugin.afterProxyInitialization(instructions);
+				}				
+				
 				instructions.push(
 					[ReturnVoid]
 				);
@@ -161,7 +170,14 @@ package eu.powdermonkey.retrofit
 			var argCount:uint = method.parameters.length;
 			var namespaze:BCNamespace = new BCNamespace('', NamespaceKind.PACKAGE_NAMESPACE)
 			var proxyPropertyName:QualifiedName = buildProxyPropName(namespaze, type)
+
+			var proxiedObjectMethodData:ProxiedObjectMethodData = new ProxiedObjectMethodData(proxyPropertyName, namespaze, argCount, method, methodType);
 			
+			// HOOK: before method invocation
+			for each (var plugin:IGeneratorPlugin in _plugins) {
+				plugin.beforeProxiedMethodInvocation(proxiedObjectMethodData, instructions);
+			}
+						
 			with (Instructions)
 			{
 				var instructions:Array = [
@@ -172,45 +188,49 @@ package eu.powdermonkey.retrofit
 				if (methodType == MethodType.METHOD)
 				{
 					instructions.push([GetLocal_0])
-					instructions.push([GetProperty, proxyPropertyName])
+					instructions.push([GetProperty, proxiedObjectMethodData.proxiedObjectPropertyQualifiedName])
 					
-					for (var i:uint=0; i < argCount; ++i)
+					for (var i:uint=0; i < proxiedObjectMethodData.argCount; ++i)
 					{
 						instructions.push([GetLocal, i+1])
 					}
 					
 //					var methodQName:QualifiedName = new QualifiedName(namespaze, method.name)
-					if (method.returnType == Type.voidType)
+					if (proxiedObjectMethodData.methodInfo.returnType == Type.voidType)
 					{
-						instructions.push([CallPropVoid, method.qname, argCount])
+						instructions.push([CallPropVoid, proxiedObjectMethodData.methodInfo.qname, argCount])
 					}
 					else
 					{
-						instructions.push([CallProperty, method.qname, argCount])
+						instructions.push([CallProperty, proxiedObjectMethodData.methodInfo.qname, proxiedObjectMethodData.argCount])
 					}
 				}
-				else if (methodType == MethodType.PROPERTY_GET || methodType == MethodType.PROPERTY_SET)
+				else if (proxiedObjectMethodData.methodType == MethodType.PROPERTY_GET || methodType == MethodType.PROPERTY_SET)
 				{
-					var methodName:String = method.fullName.match(/(\w+)\/\w+$/)[1]
-					var methodQName:QualifiedName = new QualifiedName(namespaze, methodName) 
-					instructions.push([GetLex, proxyPropertyName])
-					instructions.push([GetProperty, methodQName])
+					
+					instructions.push([GetLex, proxiedObjectMethodData.proxiedObjectPropertyQualifiedName])
+					instructions.push([GetProperty, proxiedObjectMethodData.methodQualifiedName])
 					
 					if (methodType == MethodType.PROPERTY_SET)
 					{
 						instructions.push([GetLocal, 0])
-						instructions.push([GetProperty, proxyPropertyName])
+						instructions.push([GetProperty, proxiedObjectMethodData.proxiedObjectPropertyQualifiedName])
 						instructions.push([GetLocal, 1])
-						instructions.push([SetProperty, methodQName])						
+						instructions.push([SetProperty, proxiedObjectMethodData.methodQualifiedName])
 					}
 					else {
 						instructions.push([GetLocal, 0])
-						instructions.push([GetProperty, proxyPropertyName])
-						instructions.push([GetProperty, methodQName])
+						instructions.push([GetProperty, proxiedObjectMethodData.proxiedObjectPropertyQualifiedName])
+						instructions.push([GetProperty, proxiedObjectMethodData.methodQualifiedName])
 					}		
 				}
 				
-				if (method.returnType == Type.voidType) // void
+				// HOOK: before method invocation
+				for each (var plugin:IGeneratorPlugin in _plugins) {
+					plugin.afterProxiedMethodInvocation(proxiedObjectMethodData, instructions);
+				}
+				
+				if (proxiedObjectMethodData.methodInfo.returnType == Type.voidType) // void
 				{
 					instructions.push([ReturnVoid])
 				}
