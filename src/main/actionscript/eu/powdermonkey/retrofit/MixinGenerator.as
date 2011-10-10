@@ -67,12 +67,13 @@ package eu.powdermonkey.retrofit
 					MemberVisibility.PUBLIC, // visibility
 					false, // static
 					interfaceType); // type
-									
-				
 				dynamicClass.addSlot(fieldInfo); // add field
 			}
 			
-			//
+			// HOOK: dynamic class creation
+			for each (var plugin:IGeneratorPlugin in _plugins) {
+				plugin.afterDynamicClassDefinition(dynamicClass);
+			}			
 			
 			dynamicClass.constructor = createConstructor(dynamicClass)
 			
@@ -125,7 +126,7 @@ package eu.powdermonkey.retrofit
 					var proxiedObjectData:ProxiedObjectData = new ProxiedObjectData(proxyPropertyName, proxyObject, interfaceType, namespaze);
 					
 					// HOOK: before proxied object initialization
-					for each (var plugin:IGeneratorPlugin in _plugins) {
+					for each (plugin in _plugins) {
 						plugin.beforeProxiedObjectInitialization(proxiedObjectData, instructions);
 					}					
 					
@@ -173,17 +174,18 @@ package eu.powdermonkey.retrofit
 
 			var proxiedObjectMethodData:ProxiedObjectMethodData = new ProxiedObjectMethodData(proxyPropertyName, namespaze, argCount, method, methodType);
 			
-			// HOOK: before method invocation
-			for each (var plugin:IGeneratorPlugin in _plugins) {
-				plugin.beforeProxiedMethodInvocation(proxiedObjectMethodData, instructions);
-			}
-						
+
 			with (Instructions)
 			{
 				var instructions:Array = [
 					[GetLocal_0],
 					[PushScope],
 				];
+				
+				// HOOK: before method invocation
+				for each (var plugin:IGeneratorPlugin in _plugins) {
+					plugin.beforeProxiedMethodInvocation(proxiedObjectMethodData, instructions);
+				}
 				
 				if (methodType == MethodType.METHOD)
 				{

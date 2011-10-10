@@ -1,10 +1,13 @@
-package eu.powdermonkey.retrofit.plugins
+package eu.powdermonkey.retrofit.plugins.selfinjection
 {
 	import dci.interaction.RoomTravellerRole;
 	import eu.powdermonkey.retrofit.plugins.ProxiedObjectData;
 	import flash.utils.describeType;
+	import org.flemit.bytecode.DynamicClass;
 	import org.flemit.bytecode.Instructions;
 	import org.flemit.bytecode.QualifiedName;
+	import eu.powdermonkey.retrofit.plugins.IGeneratorPlugin;
+	import eu.powdermonkey.retrofit.plugins.ProxiedObjectMethodData;
 	
 	/**
 	 * This plugin will inject proxy into proxied object into attribute tagged with [Self]
@@ -16,6 +19,10 @@ package eu.powdermonkey.retrofit.plugins
 		public function SelfInjection() 
 		{
 			
+		}
+		
+		public function afterDynamicClassDefinition(dynamicClass:DynamicClass):void {
+		
 		}
 		
 		public function beforeProxyInitialization(instructions:Array):void 

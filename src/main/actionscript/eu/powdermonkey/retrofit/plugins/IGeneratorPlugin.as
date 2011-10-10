@@ -1,5 +1,6 @@
 package eu.powdermonkey.retrofit.plugins
 {
+	import org.flemit.bytecode.DynamicClass;
 	
 	/**
 	 * Mixin generator method is a class filled with "template methods" for creating additional
@@ -9,6 +10,12 @@ package eu.powdermonkey.retrofit.plugins
 	 */
 	public interface IGeneratorPlugin 
 	{		
+		/**
+		 * Hook for modifying dynamic class - a base class for proxy object
+		 * @param	dynamicClass
+		 */
+		function afterDynamicClassDefinition(dynamicClass:DynamicClass):void;
+		
 		/**
 		 * Hook for injecting instruction just before construcing ALL proxied objects
 		 * @param	all current instructions 
