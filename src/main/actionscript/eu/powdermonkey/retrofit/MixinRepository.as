@@ -10,7 +10,6 @@ package eu.powdermonkey.retrofit
 	import org.flemit.util.ClassUtility;
 	import org.flemit.util.MethodUtil;
 	
-	import eu.powdermonkey.retrofit.plugins.DefaultInstructions;
 	import eu.powdermonkey.retrofit.plugins.IGeneratorPlugin;
 	
 	public class MixinRepository extends ClassRepository
@@ -23,7 +22,7 @@ package eu.powdermonkey.retrofit
 		
 		public function MixinRepository() {
 			super();
-			generatorPlugins = [new DefaultInstructions()];
+			generatorPlugins = [];
 		}
 		
 		public function addGeneratorPlugin(plugin:IGeneratorPlugin):void {

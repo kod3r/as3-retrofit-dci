@@ -109,16 +109,33 @@ package eu.powdermonkey.retrofit
 				var proxyObject:Object 
 				var proxyObjectType:Type 
 				
+				// HOOK: before proxy initialization
+				
 				for (var interfaceType:Type in mixins) 
 				{
 					proxyObject = mixins[interfaceType]
 					proxyObjectType = Type.getType(proxyObject)
 					proxyPropertyName = buildProxyPropName(namespaze, interfaceType)
 					
-					var proxiedObjectData:ProxiedObjectData = new ProxiedObjectData(proxyObject, interfaceType, namespaze);
+					// data for plugins
+					var proxiedObjectData:ProxiedObjectData = new ProxiedObjectData(proxyPropertyName, proxyObject, interfaceType, namespaze);
 					
+					// HOOK: before proxied object initialization
 					for each (var plugin:IGeneratorPlugin in _plugins) {
-						instructions = instructions.concat(plugin.onProxiedObjectInitialization(proxiedObjectData));
+						plugin.beforeProxiedObjectInitialization(proxiedObjectData, instructions);
+					}					
+					
+					// default instructions creating proxied objects (with parametless constructor!)
+					with (Instructions) {
+						instructions.push([GetLocal_0]); // 'this'	
+						instructions.push([FindPropertyStrict, proxiedObjectData.proxiedObjectType.qname])
+						instructions.push([ConstructProp, proxiedObjectData.proxiedObjectType.qname, 0])
+						instructions.push([InitProperty, proxyPropertyName])
+					}					
+					
+					// HOOK: after proxied object initialization					
+					for each (var plugin:IGeneratorPlugin in _plugins) {
+						plugin.afterProxiedObjectInitialization(proxiedObjectData, instructions);
 					}
 					
 					proxies++

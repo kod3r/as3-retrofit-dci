@@ -18,23 +18,41 @@ package eu.powdermonkey.retrofit.plugins
 			
 		}
 		
-		/* INTERFACE eu.powdermonkey.retrofit.plugins.IMixinGeneratorPlugin */
-		
-		public function onProxiedObjectInitialization(data:ProxiedObjectData):Array 
+		public function beforeProxyInitialization(instructions:Array):void 
 		{
-			var instructions:Array = [];
-			var proxyPropertyName:QualifiedName = DefaultInstructions.buildProxyPropName(data.namespaze, data.interfaceType);
 			
+		}
+		
+		public function afterProxyInitialization(instructions:Array):void 
+		{
+			
+		}
+		
+		public function beforeProxiedObjectInitialization(data:ProxiedObjectData, instructions:Array):void 
+		{
+			
+		}
+		
+		public function afterProxiedObjectInitialization(data:ProxiedObjectData, instructions:Array):void 
+		{
 			with (Instructions) {	
 				for each (var variable:XML in describeType(data.proxiedObject).factory.variable.(metadata.(@name == "Self"))) {
 					var varName:QualifiedName = new QualifiedName(data.namespaze, variable.@name);
-					instructions.push([GetLex, proxyPropertyName]); // get proxied object
+					instructions.push([GetLex, data.proxiedObjectPropertyQualifiedName]); // get proxied object
 					instructions.push([GetLocal, 0]); // put "this" on stack
 					instructions.push([SetProperty, varName]); // assign "this" to self variable
 				}
-			}
+			}			
+		}
+		
+		public function beforeProxiedMethodInvocation(data:ProxiedObjectMethodData, instructions:Array):void 
+		{
 			
-			return instructions;
+		}
+		
+		public function afterProxiedMethodInvocation(data:ProxiedObjectMethodData, instructions:Array):void 
+		{
+			
 		}
 		
 	}

@@ -1,6 +1,7 @@
 package eu.powdermonkey.retrofit.plugins
 {
 	import org.flemit.bytecode.BCNamespace;
+	import org.flemit.bytecode.QualifiedName;
 	import org.flemit.reflection.Type;
 	/**
 	 * ...
@@ -12,9 +13,11 @@ package eu.powdermonkey.retrofit.plugins
 		public var proxiedObjectType:Type;
 		public var interfaceType:Type;
 		public var proxiedObject:Object;
+		public var proxiedObjectPropertyQualifiedName:QualifiedName;
 		
-		public function ProxiedObjectData(proxiedObject:Object, interfaceType:Type, namespaze:BCNamespace) 
+		public function ProxiedObjectData(proxiedObjectPropertyQualifiedName:QualifiedName, proxiedObject:Object, interfaceType:Type, namespaze:BCNamespace) 
 		{
+			this.proxiedObjectPropertyQualifiedName = proxiedObjectPropertyQualifiedName;
 			this.namespaze = namespaze;
 			this.proxiedObject = proxiedObject;
 			this.interfaceType = interfaceType;
