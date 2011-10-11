@@ -63,6 +63,7 @@ package eu.powdermonkey.retrofit.plugins.asp3cts
 		
 		public function afterProxyInitialization(instructions:Array):void 
 		{
+			// initialize aspects
 			for each (var aspect:Object in _aspects) {
 				var namespaze:BCNamespace = new BCNamespace('', NamespaceKind.PACKAGE_NAMESPACE)
 				var aspectType:Type = Type.getType(aspect)
@@ -87,15 +88,14 @@ package eu.powdermonkey.retrofit.plugins.asp3cts
 			
 		}
 		
-		public function beforeProxiedMethodInvocation(data:ProxiedObjectMethodData, instructions:Array):void 
-		{
+		private function methodInvocation(data:ProxiedObjectMethodData, instructions:Array, metatag:String):void {
 			var namespaze:BCNamespace = new BCNamespace('', NamespaceKind.PACKAGE_NAMESPACE)
 			
 			for each (var aspect:Object in _aspects) {
 				var aspectType:Type = Type.getType(aspect);
 				var description:XML = describeType(aspect);
 				
-				var advices:XMLList = description.method.(metadata.(@name == "Before")[0]);
+				var advices:XMLList = description.method.(metadata.(@name == metatag)[0]);
 				
 				for each (var advice:XML in advices) {
 				
@@ -103,7 +103,7 @@ package eu.powdermonkey.retrofit.plugins.asp3cts
 					var methodQualifiedName:QualifiedName = new QualifiedName(namespaze, methodName);
 					var aspectPropertyQualifiedName:QualifiedName = buildAspectPropertyName(namespaze, aspectType);
 					
-					var adviceExpression:String = advice.metadata.(@name == "Before")[0].arg[0].@value;
+					var adviceExpression:String = advice.metadata.(@name == metatag)[0].arg[0].@value;
 					
 					if (methodMatch(data, adviceExpression)) {
 					
@@ -116,12 +116,17 @@ package eu.powdermonkey.retrofit.plugins.asp3cts
 					}
 					
 				}
-			}
+			}			
+		}
+		
+		public function beforeProxiedMethodInvocation(data:ProxiedObjectMethodData, instructions:Array):void 
+		{
+			methodInvocation(data, instructions, "Before");
 		}		
 		
 		public function afterProxiedMethodInvocation(data:ProxiedObjectMethodData, instructions:Array):void 
 		{
-			
+			methodInvocation(data, instructions, "After");
 		}
 		
 		// privates
