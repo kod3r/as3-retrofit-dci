@@ -10,7 +10,6 @@ package eu.powdermonkey.retrofit
 	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
 	import flash.utils.getQualifiedClassName;
-	import org.flexunit.experimental.theories.internals.error.CouldNotGenerateValueException;
 	
 	import org.flemit.SWFHeader;
 	import org.flemit.SWFWriter;

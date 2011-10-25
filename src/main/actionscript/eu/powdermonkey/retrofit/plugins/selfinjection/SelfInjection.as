@@ -1,6 +1,5 @@
 package eu.powdermonkey.retrofit.plugins.selfinjection
 {
-	import dci.interaction.RoomTravellerRole;
 	import eu.powdermonkey.retrofit.plugins.ProxiedObjectData;
 	import flash.utils.describeType;
 	import org.flemit.bytecode.DynamicClass;

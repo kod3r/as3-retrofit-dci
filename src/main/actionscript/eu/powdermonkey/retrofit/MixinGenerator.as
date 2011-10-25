@@ -139,7 +139,7 @@ package eu.powdermonkey.retrofit
 					}					
 					
 					// HOOK: after proxied object initialization					
-					for each (var plugin:IGeneratorPlugin in _plugins) {
+					for each (plugin in _plugins) {
 						plugin.afterProxiedObjectInitialization(proxiedObjectData, instructions);
 					}
 					
@@ -147,7 +147,7 @@ package eu.powdermonkey.retrofit
 				}
 				
 				// HOOK: after proxy initialization
-				for each (var plugin:IGeneratorPlugin in _plugins) {
+				for each (plugin in _plugins) {
 					plugin.afterProxyInitialization(instructions);
 				}				
 				
@@ -228,7 +228,7 @@ package eu.powdermonkey.retrofit
 				}
 				
 				// HOOK: before method invocation
-				for each (var plugin:IGeneratorPlugin in _plugins) {
+				for each (plugin in _plugins) {
 					plugin.afterProxiedMethodInvocation(proxiedObjectMethodData, instructions);
 				}
 				
