@@ -16,6 +16,8 @@ package eu.powdermonkey.retrofit
 	{
 		protected var mixinPairs:Dictionary = new Dictionary()
 		
+		protected var ignored:Dictionary = new Dictionary();
+		
 		protected var bases:Dictionary = new Dictionary()
 		
 		protected var _generatorPlugins:Array;
@@ -74,6 +76,7 @@ package eu.powdermonkey.retrofit
 			{
 				var interfaces:Array = base.getInterfaces()
 				var mixins:Dictionary = new Dictionary()
+				ignored[base] = [];
 				
 				for each (var interfaze:Type in interfaces)
 				{
@@ -83,10 +86,14 @@ package eu.powdermonkey.retrofit
 					}
 					else
 					{
-						throw new Error('interface '+interfaze+' defined on '+base+'has not being defined') 
+						// TODO: if is not defined and other interface extends this interface - continue
+						ignored[base].push(interfaze);
+						continue;
+						//throw new Error('interface '+interfaze+' defined on '+base+'has not being defined') 
 					}
 				}
-				return new MixinGenerator(_generatorPlugins).generate(name, base, mixins)
+								
+				return new MixinGenerator(_generatorPlugins).generate(name, base, mixins, ignored[base])
 			}
 		}
 		

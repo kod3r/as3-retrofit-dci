@@ -2,15 +2,24 @@ package eu.powdermonkey.retrofit
 {
 	import org.flemit.bytecode.*;
 	import org.flemit.reflection.*;
+	import org.spicefactory.lib.reflect.Property;
 	
 	public class BaseGenerator
 	{
+		protected var _ignored:Array;
+		
+		public function isIgnored(t:Type):Boolean {
+			return _ignored.indexOf(t) != -1;
+		}		
+		
 		protected function addInterfaceMembers(dynamicClass:DynamicClass):void
 		{
 			var allInterfaces:Array = dynamicClass.getInterfaces()
+			var baseInterface:Type = allInterfaces[0];
 			
 			for each(var inter:Type in allInterfaces)
 			{
+				
 				for each(var extendedInterface:Type in inter.getInterfaces())
 				{
 					if (allInterfaces.indexOf(extendedInterface) == -1)
@@ -19,7 +28,16 @@ package eu.powdermonkey.retrofit
 					}
 				}
 				
-				for each(var method:MethodInfo in inter.getMethods())
+				if (isIgnored(inter) || inter == baseInterface) {
+					continue;
+				}				
+				
+				var methods:Array = inter.getMethods();
+				for each(var m:Type in inter.getInterfaces()) {
+					methods = methods.concat(m.getMethods())
+				}
+				
+				for each(var method:MethodInfo in methods)
 				{
 					if (dynamicClass.getMethod(method.name) == null)
 					{					
@@ -29,7 +47,12 @@ package eu.powdermonkey.retrofit
 					}
 				}
 				
-				for each(var property:PropertyInfo in inter.getProperties())
+				var properties:Array = inter.getProperties();
+				for each(var p:Type in inter.getInterfaces()) {
+					properties = properties.concat(p.getProperties())
+				}
+				
+				for each(var property:PropertyInfo in properties)
 				{
 					if (dynamicClass.getProperty(property.name) == null)
 					{

@@ -18,12 +18,23 @@ package eu.powdermonkey.retrofit
 			super();
 			_plugins = plugins;
 		}
-		
-		public function generate(name:QualifiedName, base:Type, mixins:Dictionary):DynamicClass
+			
+		public function generate(name:QualifiedName, base:Type, mixins:Dictionary, ignored:Array):DynamicClass
 		{
+			this._ignored = ignored;
+			
 			var superClass:Type = Type.getType(Object)
 			
-			var interfaces:Array = [].concat(base).concat(base.getInterfaces())
+			var allInterfaces:Array = [].concat(base).concat(base.getInterfaces())
+			
+			var interfaces:Array = [];
+			
+			for each (var t:Type in allInterfaces) {
+				if (!isIgnored(t)) {
+					interfaces.push(t);
+				}
+			}
+			
 //			var mixinClasses:Dictionary = new Dictionary()
 //			
 //			for each (var interfaceType:Type in interfaces)
@@ -54,6 +65,9 @@ package eu.powdermonkey.retrofit
 			
 			for (var interfaceType:* in mixins) 
 			{
+				if (isIgnored(interfaceType)) {
+					continue;
+				}
 				proxyObject = mixins[interfaceType]
 				proxyObjectType = Type.getType(proxyObject)
 				proxyPropertyName = buildProxyPropName(namespaze, interfaceType)
@@ -118,6 +132,10 @@ package eu.powdermonkey.retrofit
 				
 				for (var interfaceType:Type in mixins) 
 				{
+					if (isIgnored(interfaceType)) {
+						continue;
+					}
+					
 					proxyObject = mixins[interfaceType]
 					proxyObjectType = Type.getType(proxyObject)
 					proxyPropertyName = buildProxyPropName(namespaze, interfaceType)
@@ -170,10 +188,9 @@ package eu.powdermonkey.retrofit
 		{
 			var argCount:uint = method.parameters.length;
 			var namespaze:BCNamespace = new BCNamespace('', NamespaceKind.PACKAGE_NAMESPACE)
-			var proxyPropertyName:QualifiedName = buildProxyPropName(namespaze, type)
+			var proxyPropertyName:QualifiedName = buildProxyPropName(namespaze, type)			
 
 			var proxiedObjectMethodData:ProxiedObjectMethodData = new ProxiedObjectMethodData(proxyPropertyName, namespaze, argCount, method, methodType);
-			
 
 			with (Instructions)
 			{
